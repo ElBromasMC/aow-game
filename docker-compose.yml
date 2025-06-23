@@ -1,0 +1,13 @@
+services:
+  aow-game:
+    #userns_mode: "keep-id:uid=1001,gid=1001"
+    build:
+      context: ./src
+      dockerfile: ./Dockerfile
+      target: production
+    ports:
+      - "5678:8080"
+
+#x-podman:
+#  in_pod: false
+
