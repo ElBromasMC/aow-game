@@ -47,8 +47,8 @@ int main(void)
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    SetConfigFlags(FLAG_MSAA_4X_HINT);
     InitWindow(screenWidth, screenHeight, "AOW Game");
+
     InitAudioDevice();
 
     currentScreen = TITLE;
@@ -62,9 +62,6 @@ int main(void)
     pieceTexture = LoadTexture("resources/images/piece.png");
     backgroundMusic = LoadMusicStream("resources/audio/background.ogg");
     font = LoadFont("resources/images/mecha.png");
-
-    SetMusicVolume(backgroundMusic, 1.0f);
-    PlayMusicStream(backgroundMusic);
 
     kingModel.materials[0].maps[MATERIAL_MAP_ALBEDO].texture = woodTexture;
     for (int i = 0; i < 5; i++) {
@@ -88,11 +85,13 @@ int main(void)
 
     // De-Initialization
     //--------------------------------------------------------------------------------------
-    UnloadModel(kingModel);
+    UnloadFont(font);
+    UnloadMusicStream(backgroundMusic);
+    UnloadTexture(pieceTexture);
+    UnloadTexture(woodTexture);
     for (int i = 0; i < 5; i++)
         UnloadModel(pieceModels[i]);
-    UnloadTexture(woodTexture);
-    UnloadMusicStream(backgroundMusic);
+    UnloadModel(kingModel);
 
     CloseAudioDevice();
     CloseWindow();
@@ -186,7 +185,6 @@ static void UpdateDrawFrame(void)
     // Update
     //----------------------------------------------------------------------------------
 
-    UpdateMusicStream(backgroundMusic);
     if (!onTransition) {
         switch (currentScreen) {
         case TITLE: {

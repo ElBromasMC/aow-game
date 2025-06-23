@@ -40,7 +40,7 @@ RUN make clean \
 
 WORKDIR /home/runner/src
 RUN make clean \
-    && make -j4 PLATFORM=PLATFORM_WEB
+    && make -j4 PLATFORM=PLATFORM_WEB BUILD_WEB_ASYNCIFY=TRUE
 
 RUN ls -lah
 

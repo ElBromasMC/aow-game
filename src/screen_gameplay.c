@@ -39,7 +39,6 @@ static void UpdateAI(void);
 static void DrawHealthBar3D(Vector3 position, float modelHeight, int currentHealth, int maxHealth);
 static void DrawHelpWindow(void);
 static void DrawPieceSelectionUI(void);
-static void DrawTexturedPlane(Texture2D texture, Vector2 center, Vector2 size, Vector2 tiling, Color tint);
 
 //----------------------------------------------------------------------------------
 // Gameplay Screen Functions Definition
@@ -47,6 +46,11 @@ static void DrawTexturedPlane(Texture2D texture, Vector2 center, Vector2 size, V
 // Gameplay Screen Initialization logic
 void InitGameplayScreen(void)
 {
+    // Music initialization
+    SetMusicVolume(backgroundMusic, 1.0f);
+    StopMusicStream(backgroundMusic);
+    PlayMusicStream(backgroundMusic);
+
     // Camera initialization
     camera.position = (Vector3) { 0.0f, 20.0f, 28.0f };
     camera.target = (Vector3) { 0.0f, 2.0f, 0.0f };
@@ -108,6 +112,7 @@ void InitGameplayScreen(void)
 // Gameplay Screen Update logic
 void UpdateGameplayScreen(void)
 {
+    UpdateMusicStream(backgroundMusic);
     HandleInput();
     UpdateAI();
 
@@ -218,15 +223,14 @@ void DrawGameplayScreen(void)
 {
     ClearBackground(SKYBLUE);
     BeginMode3D(camera);
-    DrawTexturedPlane(woodTexture, (Vector2) { 0.0f, 0.0f }, (Vector2) { 50.0f, 50.0f }, (Vector2) { 10.0f, 10.0f }, BROWN);
-    // DrawPlane((Vector3) { 0.0f, 0.0f, 0.0f }, (Vector2) { 50.0f, 50.0f }, LIGHTGRAY);
-    // DrawGrid(50, 1.0f);
+    DrawPlane((Vector3) { 0.0f, 0.0f, 0.0f }, (Vector2) { 50.0f, 50.0f }, LIGHTGRAY);
+    DrawGrid(50, 1.0f);
 
     // Draw Lanes
     for (int i = 1; i <= LANE_COUNT; i++) {
         float laneX = (i - 2) * LANE_SPACING;
         Color laneColor = (selectedLane == i) ? Fade(GOLD, 0.5f) : Fade(DARKGRAY, 0.5f);
-        DrawCube((Vector3) { laneX, 0.02f, 0.0f }, LANE_WIDTH, 0.02f, 40.0f, laneColor);
+        DrawCube((Vector3) { laneX, 0.05f, 0.0f }, LANE_WIDTH, 0.05f, 40.0f, laneColor);
     }
 
     // Draw Models
@@ -270,8 +274,8 @@ void DrawGameplayScreen(void)
     EndMode3D();
 
     // Draw UI
-    DrawHealthBar3D(player.king.position, TARGET_KING_HEIGHT, player.king.health, player.king.maxHealth);
-    DrawHealthBar3D(computer.king.position, TARGET_KING_HEIGHT, computer.king.health, computer.king.maxHealth);
+    DrawHealthBar3D(player.king.position, 2 * TARGET_KING_HEIGHT, player.king.health, player.king.maxHealth);
+    DrawHealthBar3D(computer.king.position, 2 * TARGET_KING_HEIGHT, computer.king.health, computer.king.maxHealth);
 
     for (int i = 0; i < MAX_PIECES; i++) {
         if (player.pieces[i].active)
@@ -354,8 +358,8 @@ static void HandleInput(void)
                 (IsKeyDown(KEY_S) || IsKeyDown(KEY_DOWN)) * speed,
             (IsKeyDown(KEY_D) || IsKeyDown(KEY_RIGHT)) * speed - // Move right-left
                 (IsKeyDown(KEY_A) || IsKeyDown(KEY_LEFT)) * speed,
-            (IsKeyDown(KEY_SPACE))*speed - // Move up-down
-                (IsKeyDown(KEY_LEFT_CONTROL))*speed },
+            (IsKeyDown(KEY_SPACE)) * speed - // Move up-down
+                (IsKeyDown(KEY_LEFT_SHIFT)) * speed },
         (Vector3) {
             GetMouseDelta().x * mouseSensibility, // Rotation: yaw
             GetMouseDelta().y * mouseSensibility, // Rotation: pitch
@@ -445,7 +449,7 @@ static void DrawHelpWindow(void)
     DrawRectangle(posX, posY, width, height, Fade(RAYWHITE, 0.9f));
     DrawRectangleLines(posX, posY, width, height, DARKGRAY);
     DrawText("GAME CONTROLS (Press H to hide)", posX + 10, posY + 10, 20, BLACK);
-    DrawText("Camera: WASD, Space, L-Ctrl, Mouse", posX + 20, posY + 40, 20, DARKGRAY);
+    DrawText("Camera: WASD, Space, L-Shift, Mouse", posX + 20, posY + 40, 20, DARKGRAY);
     DrawText("Select Lane: Keys 1, 2, 3", posX + 20, posY + 70, 20, DARKGRAY);
     DrawText("Spawn Units (after selecting a lane):", posX + 20, posY + 100, 20, DARKGRAY);
     DrawText("4 - Pawn (100)", posX + 40, posY + 130, 20, DARKGRAY);
@@ -497,33 +501,4 @@ static void DrawPieceSelectionUI(void)
         // Draw bar outline
         DrawRectangleLines(barX, barY, barWidth, barHeight, GRAY);
     }
-}
-
-static void DrawTexturedPlane(Texture2D texture, Vector2 center, Vector2 size, Vector2 tiling, Color tint)
-{
-    rlSetTexture(texture.id); // Enable the texture
-
-    rlBegin(RL_QUADS);
-    rlColor4ub(tint.r, tint.g, tint.b, tint.a);
-    rlNormal3f(0.0f, 1.0f, 0.0f); // All vertices have the same upward-facing normal
-
-    // Vertex 1: Bottom-Left
-    // The TexCoord parameters define how the texture maps. (0,0) is one corner, (tiling.x, tiling.y) is the other.
-    rlTexCoord2f(0.0f, 0.0f);
-    rlVertex3f(center.x - size.x / 2, 0.0f, center.y - size.y / 2);
-
-    // Vertex 2: Top-Left
-    rlTexCoord2f(0.0f, tiling.y);
-    rlVertex3f(center.x - size.x / 2, 0.0f, center.y + size.y / 2);
-
-    // Vertex 3: Top-Right
-    rlTexCoord2f(tiling.x, tiling.y);
-    rlVertex3f(center.x + size.x / 2, 0.0f, center.y + size.y / 2);
-
-    // Vertex 4: Bottom-Right
-    rlTexCoord2f(tiling.x, 0.0f);
-    rlVertex3f(center.x + size.x / 2, 0.0f, center.y - size.y / 2);
-    rlEnd();
-
-    rlSetTexture(0); // Disable the texture
 }
