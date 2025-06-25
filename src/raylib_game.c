@@ -63,11 +63,6 @@ int main(void)
     backgroundMusic = LoadMusicStream("resources/audio/background.ogg");
     font = LoadFont("resources/images/mecha.png");
 
-    kingModel.materials[0].maps[MATERIAL_MAP_ALBEDO].texture = woodTexture;
-    for (int i = 0; i < 5; i++) {
-        pieceModels[i].materials[0].maps[MATERIAL_MAP_ALBEDO].texture = pieceTexture;
-    }
-
     DisableCursor(); // Limit cursor to relative movement inside the window
 
 #if defined(PLATFORM_WEB)
