@@ -76,8 +76,8 @@ typedef struct Player {
 extern GameScreen currentScreen;
 extern Model kingModel;
 extern Model pieceModels[5];
-extern Texture2D woodTexture;
-extern Texture2D pieceTexture;
+// extern Texture2D woodTexture;
+// extern Texture2D pieceTexture;
 extern Music backgroundMusic;
 extern Font font;
 

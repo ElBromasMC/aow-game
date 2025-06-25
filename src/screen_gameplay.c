@@ -222,14 +222,13 @@ void DrawGameplayScreen(void)
 {
     ClearBackground(SKYBLUE);
     BeginMode3D(camera);
-    DrawPlane((Vector3) { 0.0f, 0.0f, 0.0f }, (Vector2) { 50.0f, 50.0f }, LIGHTGRAY);
-    DrawGrid(50, 1.0f);
+    DrawPlane((Vector3) { 0.0f, 0.0f, 0.0f }, (Vector2) { 50.0f, 50.0f }, DARKBROWN);
 
     // Draw Lanes
     for (int i = 1; i <= LANE_COUNT; i++) {
         float laneX = (i - 2) * LANE_SPACING;
         Color laneColor = (selectedLane == i) ? Fade(GOLD, 0.5f) : Fade(DARKGRAY, 0.5f);
-        DrawCube((Vector3) { laneX, 0.05f, 0.0f }, LANE_WIDTH, 0.05f, 40.0f, laneColor);
+        DrawCube((Vector3) { laneX, 0.1f, 0.0f }, LANE_WIDTH, 0.05f, 40.0f, laneColor);
     }
 
     // Draw Models

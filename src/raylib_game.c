@@ -12,8 +12,8 @@
 GameScreen currentScreen = TITLE;
 Model kingModel = { 0 };
 Model pieceModels[5] = { 0 };
-Texture2D woodTexture = { 0 };
-Texture2D pieceTexture = { 0 };
+// Texture2D woodTexture = { 0 };
+// Texture2D pieceTexture = { 0 };
 Music backgroundMusic = { 0 };
 Font font = { 0 };
 
@@ -58,8 +58,8 @@ int main(void)
     pieceModels[PIECE_BISHOP] = LoadModel("resources/models/bishop.glb");
     pieceModels[PIECE_ROOK] = LoadModel("resources/models/rook.glb");
     pieceModels[PIECE_QUEEN] = LoadModel("resources/models/queen.glb");
-    woodTexture = LoadTexture("resources/images/wood.png");
-    pieceTexture = LoadTexture("resources/images/piece.png");
+    // woodTexture = LoadTexture("resources/images/wood.png");
+    // pieceTexture = LoadTexture("resources/images/piece.png");
     backgroundMusic = LoadMusicStream("resources/audio/background.ogg");
     font = LoadFont("resources/images/mecha.png");
 
@@ -82,8 +82,8 @@ int main(void)
     //--------------------------------------------------------------------------------------
     UnloadFont(font);
     UnloadMusicStream(backgroundMusic);
-    UnloadTexture(pieceTexture);
-    UnloadTexture(woodTexture);
+    // UnloadTexture(pieceTexture);
+    // UnloadTexture(woodTexture);
     for (int i = 0; i < 5; i++)
         UnloadModel(pieceModels[i]);
     UnloadModel(kingModel);
